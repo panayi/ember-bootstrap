@@ -24254,10 +24254,18 @@ Ember.$(document).ready(
 (function(exports) {
 Ember.AlertMessage = Ember.View.extend({
   classNameBindings: 'type',
-  classNames: 'alert-message',
+  classNames: ['alert-message'],
   template: Ember.Handlebars.compile('<a class="close" rel="close" href="#">×</a><p>{{message}}</p>'),
   type: 'warning',
   message: null,
+  removeAfter: null,
+
+  didInsertElement: function() {
+    var removeAfter = this.get('removeAfter');
+    if (removeAfter > 0) {
+      Ember.run.later(this, 'destroy', removeAfter);
+    }
+  },
 
   click: function(event) {
     var target = jQuery(event.target),
@@ -24267,6 +24275,14 @@ Ember.AlertMessage = Ember.View.extend({
       return false;
     }
   }
+});
+
+})({});
+
+
+(function(exports) {
+Ember.BlockAlertMessage = Ember.AlertMessage.extend({
+  classNames: ['block-message']
 });
 
 })({});
@@ -24331,9 +24347,9 @@ Ember.ModalPane.reopenClass({
 
 
 (function(exports) {
-Ember.PillItem = SC.View.extend({
+Ember.PillItem = Ember.View.extend({
   classNameBindings: 'isActive:active',
-  template: SC.Handlebars.compile('<a href="#">{{content}}</a>'),
+  template: Ember.Handlebars.compile('<a href="#">{{content}}</a>'),
 
   isActive: Ember.computed(function() {
     var selection = this.getPath('parentView.selection'),
@@ -24355,6 +24371,17 @@ Ember.PillItem = SC.View.extend({
 (function(exports) {
 Ember.Pills = Ember.CollectionView.extend({
   classNames: ['pills'],
+  tagName: 'ul',
+  itemViewClass: Ember.PillItem,
+  selection: null
+});
+
+})({});
+
+
+(function(exports) {
+Ember.Tabs = Ember.CollectionView.extend({
+  classNames: ['tabs'],
   tagName: 'ul',
   itemViewClass: Ember.PillItem,
   selection: null
