@@ -25557,6 +25557,121 @@ window.Bootstrap = Ember.Namespace.create();
 
 
 (function(exports) {
+Bootstrap.Forms = Ember.Namespace.create({
+
+  human: function(value) {
+    if (value == undefined)
+      return;
+
+    // Replace all _ with spaces
+    value = value.replace(/_/, " ");
+    // Capitalize the first letter of every word
+    value = value.replace(/(^|\s)([a-z])/g, function(m,p1,p2){ return p1+p2.toUpperCase(); });
+    return value;
+  }
+});
+
+})({});
+
+
+(function(exports) {
+Bootstrap.Forms.Field = Ember.View.extend({
+  tagName: 'div',
+  template: Ember.Handlebars.compile('<div class="control-group">\
+    {{view labelView}}\
+    <div class="controls">\
+      {{view inputField}}\
+      {{view errorsView}}\
+    </div>\
+  </div>'),
+
+  labelView: Ember.View.extend({
+    tagName: 'label',
+    classNames: ['control-label'],
+    template: Ember.Handlebars.compile('{{value}}'),
+
+    value: Ember.computed(function(key, value) {
+      var parent = this.get('parentView');
+
+      if (value && value != parent.get('label')) {
+        parent.set('label', value);
+      } else {
+        value = parent.get('label');
+      }
+
+      return Bootstrap.Forms.human(value);
+    }).property('parentView.label'),
+
+    forBinding: 'value',
+    attributeBindings: ['for']
+  }),
+
+  inputField: Ember.View.extend({
+    classNames: ['ember-bootstrap-extend'],
+    tagName: 'div',
+    template: Ember.Handlebars.compile('This class is not meant to be used directly, but extended.')
+  }),
+
+  errorsView: Ember.View.extend({
+    tagName: 'div',
+    classNames: ['errors', 'help-inline'],
+
+    _updateContent: Ember.observer(function() {
+      parent = this.get('parentView');
+
+      if (parent !== null) {
+        context = parent.get('bindingContext');
+        label = parent.get('label');
+
+        if (context !== null && !context.get('isValid')) {
+          errors = context.get('errors');
+
+          if (errors != null && errors[label] !== null) {
+            parent.$().find('.control-group').addClass('error')
+            this.$().html(errors[label].join(', '));
+          } else {
+            parent.$().find('.control-group').removeClass('error')
+            this.$().html('');
+          }
+        } else {
+          parent.$().find('.control-group').removeClass('error')
+          this.$().html('');
+        }
+      }
+    }, 'parentView.bindingContext.isValid', 'parentView.label')
+  })
+});
+
+})({});
+
+
+(function(exports) {
+Bootstrap.Forms.TextArea = Bootstrap.Forms.Field.extend({
+
+  inputField: Ember.TextArea.extend({
+    valueBinding: 'parentView.value',
+    nameBinding: 'parentView.label',
+    attributeBindings: ['name']
+  })
+});
+
+})({});
+
+
+(function(exports) {
+Bootstrap.Forms.TextField = Bootstrap.Forms.Field.extend({
+
+  inputField: Ember.TextField.extend({
+    valueBinding: 'parentView.value',
+    nameBinding: 'parentView.label',
+    attributeBindings: ['name']
+  })
+});
+
+})({});
+
+
+(function(exports) {
 var get = Ember.get;
 
 var modalPaneTemplate = '\
@@ -25694,11 +25809,17 @@ var get = Ember.get;
 
 Bootstrap.Button = Ember.Button.extend({
   classNames: ['btn'],
-  classNameBindings: ['typeClass', 'disabled'],
-
+  classNameBindings: ['typeClass', 'sizeClass', 'disabled'],
+  
   typeClass: Ember.computed(function() {
-    return 'btn-' + get(this, 'type');
-  }).property('type').cacheable()
+    var type = get(this, 'type');
+    return type ? 'btn-' + type : null;
+  }).property('type').cacheable(),
+  
+  sizeClass: Ember.computed(function() {
+    var size = get(this, 'size');
+    return size ? 'btn-' + size : null;
+  }).property('size').cacheable()
 });
 
 })({});
@@ -25722,21 +25843,46 @@ var get = Ember.get, getPath = Ember.getPath, set = Ember.set;
 Bootstrap.ItemSelectionSupport = Ember.Mixin.create({
   classNameBindings: ['isActive:active'],
 
+  title: Ember.computed(function() {
+    var parentView = get(this, 'parentView'),
+        content = get(this, 'content'),
+        titleKey;
+    if (parentView) {
+      titleKey = get(parentView, 'itemTitleKey');
+      if (titleKey) return get(content, titleKey);
+    }
+    return content;
+  }).property('content', 'parentView').cacheable(),
+
+  value: Ember.computed(function() {
+    var parentView = get(this, 'parentView'),
+        content = get(this, 'content'),
+        valueKey;
+    if (parentView) {
+      valueKey = get(parentView, 'itemValueKey');
+      if (valueKey) return get(content, valueKey);
+    }
+    return content;
+  }).property('content', 'parentView').cacheable(),
+
   isActive: Ember.computed(function() {
-    var selection = getPath(this, 'parentView.selection'),
-        content = get(this, 'content');
-    return selection === content;
-  }).property('parentView.selection', 'content').cacheable(),
+    var parentView = get(this, 'parentView'),
+        selection, value;
+    if (!parentView) return false;
+    selection = get(parentView, 'selection');
+    value = get(this, 'value');
+    return selection === value;
+  }).property('parentView.selection', 'value').cacheable(),
 
   click: function(event) {
-    var content = get(this, 'content'),
+    var value = get(this, 'value'),
         parentView = get(this, 'parentView'),
-        allowsEmptySelection = get(parentView, 'allowsEmptySelection');
+        allowsEmptySelection = get(parentView, 'allowsEmptySelection'),
         selection = get(parentView, 'selection');
-    if (selection === content && allowsEmptySelection === true) {
-      content = null;
+    if (allowsEmptySelection === true && selection === value) {
+      value = null;
     }
-    set(parentView, 'selection', content);
+    set(parentView, 'selection', value);
     return false;
   }
 });
@@ -25762,7 +25908,7 @@ Bootstrap.RadioButtonGroup = Bootstrap.ButtonGroup.extend({
   itemViewClass: Em.View.extend(Bootstrap.ItemSelectionSupport, {
     classNames: 'btn',
     tagName: 'a',
-    template: Ember.Handlebars.compile('{{content}}')
+    template: Ember.Handlebars.compile('{{title}}')
   })
 });
 
@@ -25776,22 +25922,9 @@ var get = Ember.get, set = Ember.set;
 Bootstrap.NavList = Ember.CollectionView.extend({
   classNames: ['nav', 'nav-list'],
   tagName: 'ul',
-  itemTitleKey: 'title',
 
   itemViewClass: Em.View.extend(Bootstrap.ItemSelectionSupport, {
-    template: Ember.Handlebars.compile("<a href='#'>{{title}}</a>"),
-
-    title: Ember.computed(function() {
-      var pV = get(this, 'parentView'),
-          content = get(this, 'content');
-      if (pV && content) {
-        if ('string' === typeof content) {
-          return content;
-        } else {
-          return get(content, get(pV, 'itemTitleKey'));
-        }
-      }
-    }).property('parentView', 'content').cacheable()
+    template: Ember.Handlebars.compile("<a href='#'>{{title}}</a>")
   })
 });
 
@@ -25807,10 +25940,8 @@ Bootstrap.BlockAlertMessage = Bootstrap.AlertMessage.extend({
 
 
 (function(exports) {
-var get = Ember.get, getPath = Ember.getPath, set = Ember.set;
-
 Bootstrap.PillItem = Ember.View.extend(Bootstrap.ItemSelectionSupport, {
-  template: Ember.Handlebars.compile('<a href="#">{{content}}</a>')
+  template: Ember.Handlebars.compile('<a href="#">{{title}}</a>')
 });
 
 })({});
@@ -25855,6 +25986,62 @@ Bootstrap.ProgressBar = Ember.View.extend({
     var progress = get(this, 'progress');
     return "width:" + progress + "%;";
   }).property('progress').cacheable()
+});
+
+})({});
+
+
+(function(exports) {
+var get = Ember.get, getPath = Ember.getPath, set = Ember.set;
+
+Bootstrap.TypeSupport = Ember.Mixin.create({
+  template: Ember.Handlebars.compile('{{content}}'),
+  tagName: 'span',
+  content: null,
+  typeName: null,
+  classNameBindings: 'typeClass',
+  type: null, // 'success', 'warning', 'error', 'info' || 'inverse'
+  typeClass: Ember.computed(function() {
+    var type = get(this, 'type'),
+        typeName = get(this, 'typeName');
+    return type ? typeName + '-' + type : null;
+  }).property('type').cacheable()
+});
+
+})({});
+
+
+(function(exports) {
+var get = Ember.get;
+
+Bootstrap.Badge = Ember.View.extend(Bootstrap.TypeSupport, {
+  classNames: 'badge',
+  typeName: 'badge',
+  content: null
+});
+
+})({});
+
+
+(function(exports) {
+var get = Ember.get;
+
+Bootstrap.Label = Ember.View.extend(Bootstrap.TypeSupport, {
+  classNames: 'label',
+  typeName: 'label',
+  content: null
+});
+
+})({});
+
+
+(function(exports) {
+var get = Ember.get;
+
+Bootstrap.Well = Ember.View.extend({
+  template: Ember.Handlebars.compile('{{content}}'),
+  classNames: 'well',
+  content: null
 });
 
 })({});

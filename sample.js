@@ -16,13 +16,19 @@ SampleApp.modalPaneController = Ember.Object.create({
 });
 
 SampleApp.pillsController = Ember.Object.create({
-  content: ['Pill A', 'Pill B', 'Pill C'],
-  selection: 'Pill A'
+  content: ['Pill A', 'Pill B', 'Pill C']
+});
+
+SampleApp.stackedPillsController = Ember.Object.create({
+  content: ['Pill A', 'Pill B', 'Pill C']
 });
 
 SampleApp.tabsController = Ember.Object.create({
-  content: ['Tab A', 'Tab B', 'Tab C'],
-  selection: 'Tab A'
+  content: ['Tab A', 'Tab B', 'Tab C']
+});
+
+SampleApp.stackedTabsController = Ember.Object.create({
+  content: ['Tab A', 'Tab B', 'Tab C']
 });
 
 SampleApp.progressController = Ember.Object.create({
@@ -40,12 +46,15 @@ SampleApp.progressController = Ember.Object.create({
 });
 
 SampleApp.navListController = Ember.Object.create({
-  content: ['Tab A', 'Tab B', 'Tab C'],
-  selection: 'Tab A'
+  content: ['Tab A', 'Tab B', 'Tab C']
 });
 
 SampleApp.buttonGroupController = Ember.Object.create({
   content: ['Tab A', 'Tab B', 'Tab C'],
-  selection: 'Tab A'
+  allowsEmptySelection: false
 });
 
+SampleApp.TodoController = Ember.Object.create({
+  completed: 4,
+  content: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6', 'Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11']
+});
