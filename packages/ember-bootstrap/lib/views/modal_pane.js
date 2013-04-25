@@ -21,6 +21,9 @@ Bootstrap.ModalPane = Ember.View.extend({
   message: null,
   primary: null,
   secondary: null,
+  primaryAction: null,
+  secondaryAction: null,
+  closeAction: null,
   showBackdrop: true,
   headerViewClass: Ember.View.extend({
     tagName: 'h3',
