@@ -9,26 +9,34 @@ var modalPaneTemplate = [
 '</div>',
 '<div class="modal-body">{{view view.bodyViewClass}}</div>',
 '<div class="modal-footer">',
-'  {{#if view.secondary}}<a href="#" class="btn btn-secondary" rel="secondary" {{action "_modalPrimaryClick" view}}>{{view.secondary}}</a>{{/if}}',
-'  {{#if view.primary}}<a href="#" class="btn btn-primary" rel="primary" {{action "_modalSecondaryClick" view}}>{{view.primary}}</a>{{/if}}',
+'  {{#if view.secondary}}<button href="#" class="btn btn-secondary" rel="secondary" {{action "_modalPrimaryClick" view}} {{bindAttr disabled="primaryButtonDisabled"}}>{{view.secondary}}</button>{{/if}}',
+'  {{#if view.primary}}<button href="#" class="btn btn-primary" rel="primary" {{action "_modalSecondaryClick" view}} {{bindAttr disabled="secondaryButtonDisabled"}}>{{view.primary}}</button>{{/if}}',
 '</div>'].join("\n");
 var modalPaneBackdrop = '<div class="modal-backdrop"></div>';
 
 Bootstrap.ModalPane = Ember.View.extend({
   classNames: 'modal',
   defaultTemplate: Ember.Handlebars.compile(modalPaneTemplate),
+
   heading: null,
   bodyTemplateName: null,
   primary: null,
   secondary: null,
+
   primaryAction: null,
   secondaryAction: null,
   closeAction: null,
+
+  primaryButtonDisabled: false,
+  secondaryButtonDisabled: false,
+
   showBackdrop: true,
+
   headerViewClass: Ember.View.extend({
     tagName: 'h3',
     template: Ember.Handlebars.compile('{{view.parentView.heading}}')
   }),
+
   bodyViewClass: Ember.View.extend({
     templateName: function() {
       return this.get('parentView.bodyTemplateName');
