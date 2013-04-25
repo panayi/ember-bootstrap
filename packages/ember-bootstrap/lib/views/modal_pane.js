@@ -4,13 +4,13 @@ var jQuery = window.jQuery;
 
 var modalPaneTemplate = [
 '<div class="modal-header">',
-'  <a href="#" class="close" rel="close" {{action "_modalCloseClick" view.parentView}}>&times;</a>',
+'  <a href="#" class="close" rel="close" {{action "_modalCloseClick" view}}>&times;</a>',
 '  {{view view.headerViewClass}}',
 '</div>',
 '<div class="modal-body">{{view view.bodyViewClass}}</div>',
 '<div class="modal-footer">',
-'  {{#if view.secondary}}<a href="#" class="btn btn-secondary" rel="secondary" {{action "_modalPrimaryClick" view.parentView}}>{{view.secondary}}</a>{{/if}}',
-'  {{#if view.primary}}<a href="#" class="btn btn-primary" rel="primary" {{action "_modalSecondaryClick" view.parentView}}>{{view.primary}}</a>{{/if}}',
+'  {{#if view.secondary}}<a href="#" class="btn btn-secondary" rel="secondary" {{action "_modalPrimaryClick" view}}>{{view.secondary}}</a>{{/if}}',
+'  {{#if view.primary}}<a href="#" class="btn btn-primary" rel="primary" {{action "_modalSecondaryClick" view}}>{{view.primary}}</a>{{/if}}',
 '</div>'].join("\n");
 var modalPaneBackdrop = '<div class="modal-backdrop"></div>';
 
