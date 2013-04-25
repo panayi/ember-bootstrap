@@ -3,18 +3,18 @@ var Bootstrap = window.Bootstrap = Ember.Namespace.create();
 Ember.Route.reopen({
 	events: {
 		_modalCloseClick: function(modalView) {
-			this.handleModalActionAndDestroy(modalView.get('closeAction'));
+			this.handleModalActionAndDestroy(modalView, modalView.get('closeAction'));
 		},
 
 		_modalPrimaryClick: function(modalView) {
-			this.handleModalActionAndDestroy(modalView.get('primaryAction'));
+			this.handleModalActionAndDestroy(modalView, modalView.get('primaryAction'));
 		},
 
 		_modalSecondaryClick: function(modalView) {
-			this.handleModalActionAndDestroy(modalView.get('secondaryAction'));
+			this.handleModalActionAndDestroy(modalView, modalView.get('secondaryAction'));
 		}
 	},
-
+	
 	handleModalActionAndDestroy: function(modalView, action) {
 		if (action) {
 			var passedTarget = action.match(/(.+)\:/);
@@ -38,7 +38,7 @@ Ember.Route.reopen({
 				this.send(action, modalView);
 			}
 		}
-		
+
 		modalView.destroy();
 	}
 });
