@@ -12,7 +12,7 @@ var modalPaneTemplate = [
 '  {{#if view.secondary}}<button href="#" class="btn btn-secondary" rel="secondary" {{action "_modalSecondaryClick" view}} {{bindAttr disabled="primaryButtonDisabled"}}>{{view.secondary}}</button>{{/if}}',
 '  {{#if view.primary}}<button href="#" class="btn btn-primary" rel="primary" {{action "_modalPrimaryClick" view}} {{bindAttr disabled="secondaryButtonDisabled"}}>{{view.primary}}</button>{{/if}}',
 '</div>'].join("\n");
-var modalPaneBackdrop = '<div class="modal-backdrop"></div>';
+var modalPaneBackdrop = '<div class="modal-backdrop" {{action "backdropClicked" target="view.modalView"}}></div>';
 
 Bootstrap.ModalPane = Ember.View.extend({
   classNames: 'modal',
@@ -31,6 +31,7 @@ Bootstrap.ModalPane = Ember.View.extend({
   secondaryButtonDisabled: false,
 
   showBackdrop: true,
+  closeOnBackdropClick: true,
 
   headerViewClass: Ember.View.extend({
     tagName: 'h3',
@@ -59,9 +60,22 @@ Bootstrap.ModalPane = Ember.View.extend({
     }
   },
 
+  backdropClicked: function() {
+    if (this.closeOnBackdropClick) {
+      this.destroy();
+    }
+  },
+
   _appendBackdrop: function() {
     var parentLayer = this.$().parent();
-    this._backdrop = jQuery(modalPaneBackdrop).appendTo(parentLayer);
+    var modalView = this;
+
+    this._backdrop = Ember.View.create({
+      template: Ember.Handlebars.compile(modalPaneBackdrop),
+      modalView: modalView
+    });
+
+    this._backdrop.appendTo(parentLayer);
   },
 
   _setupDocumentKeyHandler: function() {
