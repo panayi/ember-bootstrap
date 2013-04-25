@@ -34,7 +34,7 @@ Bootstrap.ModalPane = Ember.View.extend({
 
   headerViewClass: Ember.View.extend({
     tagName: 'h3',
-    template: Ember.Handlebars.compile('{{view.parentView.heading}}')
+    template: Ember.Handlebars.compile('{{#if view.parentView.heading}}{{view.parentView.heading}}{{else}}&nbsp;{{/if}}')
   }),
 
   bodyViewClass: Ember.View.extend({
