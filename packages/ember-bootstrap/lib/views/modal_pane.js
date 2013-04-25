@@ -4,13 +4,13 @@ var jQuery = window.jQuery;
 
 var modalPaneTemplate = [
 '<div class="modal-header">',
-'  <a href="#" class="close" rel="close">&times;</a>',
+'  <a href="#" class="close" rel="close" {{action "_modalCloseClick" view.parentView}}>&times;</a>',
 '  {{view view.headerViewClass}}',
 '</div>',
 '<div class="modal-body">{{view view.bodyViewClass}}</div>',
 '<div class="modal-footer">',
-'  {{#if view.secondary}}<a href="#" class="btn btn-secondary" rel="secondary">{{view.secondary}}</a>{{/if}}',
-'  {{#if view.primary}}<a href="#" class="btn btn-primary" rel="primary">{{view.primary}}</a>{{/if}}',
+'  {{#if view.secondary}}<a href="#" class="btn btn-secondary" rel="secondary" {{action "_modalPrimaryClick" view.parentView}}>{{view.secondary}}</a>{{/if}}',
+'  {{#if view.primary}}<a href="#" class="btn btn-primary" rel="primary" {{action "_modalSecondaryClick" view.parentView}}>{{view.primary}}</a>{{/if}}',
 '</div>'].join("\n");
 var modalPaneBackdrop = '<div class="modal-backdrop"></div>';
 
@@ -27,7 +27,6 @@ Bootstrap.ModalPane = Ember.View.extend({
     template: Ember.Handlebars.compile('{{view.parentView.heading}}')
   }),
   bodyViewClass: Ember.View.extend({
-    tagName: 'p',
     template: Ember.Handlebars.compile('{{{view.parentView.message}}}')
   }),
 
@@ -44,24 +43,6 @@ Bootstrap.ModalPane = Ember.View.extend({
   keyPress: function(event) {
     if (event.keyCode === 27) {
       this._triggerCallbackAndDestroy({ close: true }, event);
-    }
-  },
-
-  click: function(event) {
-    var target = event.target,
-        targetRel = target.getAttribute('rel');
-
-    if (targetRel === 'close') {
-      this._triggerCallbackAndDestroy({ close: true }, event);
-      return false;
-
-    } else if (targetRel === 'primary') {
-      this._triggerCallbackAndDestroy({ primary: true }, event);
-      return false;
-
-    } else if (targetRel === 'secondary') {
-      this._triggerCallbackAndDestroy({ secondary: true }, event);
-      return false;
     }
   },
 
