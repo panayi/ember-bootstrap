@@ -9,8 +9,8 @@ var modalPaneTemplate = [
 '</div>',
 '<div class="modal-body">{{view view.bodyViewClass}}</div>',
 '<div class="modal-footer">',
-'  {{#if view.secondary}}<button href="#" class="btn btn-secondary" rel="secondary" {{action "_modalPrimaryClick" view}} {{bindAttr disabled="primaryButtonDisabled"}}>{{view.secondary}}</button>{{/if}}',
-'  {{#if view.primary}}<button href="#" class="btn btn-primary" rel="primary" {{action "_modalSecondaryClick" view}} {{bindAttr disabled="secondaryButtonDisabled"}}>{{view.primary}}</button>{{/if}}',
+'  {{#if view.secondary}}<button href="#" class="btn btn-secondary" rel="secondary" {{action "_modalSecondaryClick" view}} {{bindAttr disabled="primaryButtonDisabled"}}>{{view.secondary}}</button>{{/if}}',
+'  {{#if view.primary}}<button href="#" class="btn btn-primary" rel="primary" {{action "_modalPrimaryClick" view}} {{bindAttr disabled="secondaryButtonDisabled"}}>{{view.primary}}</button>{{/if}}',
 '</div>'].join("\n");
 var modalPaneBackdrop = '<div class="modal-backdrop"></div>';
 
