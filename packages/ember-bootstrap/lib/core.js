@@ -39,5 +39,6 @@ Ember.Route.reopen({
       }
     }
 
-    modalV
+    modalView.destroy();
+  }
 });
