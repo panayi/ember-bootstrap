@@ -18,7 +18,7 @@ Bootstrap.ModalPane = Ember.View.extend({
   classNames: 'modal',
   defaultTemplate: Ember.Handlebars.compile(modalPaneTemplate),
   heading: null,
-  message: null,
+  bodyTemplateName: null,
   primary: null,
   secondary: null,
   primaryAction: null,
@@ -30,7 +30,9 @@ Bootstrap.ModalPane = Ember.View.extend({
     template: Ember.Handlebars.compile('{{view.parentView.heading}}')
   }),
   bodyViewClass: Ember.View.extend({
-    template: Ember.Handlebars.compile('{{{view.parentView.message}}}')
+    templateName: function() {
+      return this.get('parentView.bodyTemplateName');
+    }.property()
   }),
 
   didInsertElement: function() {
