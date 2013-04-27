@@ -23,13 +23,13 @@ Ember.Route.reopen({
 
       if (target === 'controller') {
         var controller = modalView.get('controller');
-        Ember.warn("Callback for modal not found in controller", controller && controller.actionName);
+        Ember.warn("Callback for modal not found in controller", controller && controller[actionName]);
 
         if (typeof controller[actionName] === "function") {
           controller[actionName](modalView);
         }
       } else if (target === "view") {
-        Ember.warn("Callback for modal not found in view", modalView.actionName);
+        Ember.warn("Callback for modal not found in view", modalView[actionName]);
 
         if (typeof modalView[actionName] === "function") {
           modalView[actionName]();
