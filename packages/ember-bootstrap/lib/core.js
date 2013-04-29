@@ -20,25 +20,28 @@ Ember.Route.reopen({
       var passedTarget = action.match(/(.+)\:/);
       var target = passedTarget ? passedTarget[1] : null;
       var actionName = passedTarget ? action.replace(passedTarget[0], '') : action;
+      var result;
 
       if (target === 'controller') {
         var controller = modalView.get('controller');
         Ember.warn("Callback for modal not found in controller", controller && controller[actionName]);
 
         if (typeof controller[actionName] === "function") {
-          controller[actionName](modalView);
+          result = controller[actionName](modalView);
         }
       } else if (target === "view") {
         Ember.warn("Callback for modal not found in view", modalView[actionName]);
 
         if (typeof modalView[actionName] === "function") {
-          modalView[actionName]();
+          result = modalView[actionName]();
         }
       } else {
         this.send(action, modalView);
       }
     }
 
-    modalView.destroy();
+    if (result) {
+      modalView.destroy();
+    }
   }
 });
