@@ -1,12 +1,9 @@
 var Bootstrap = window.Bootstrap = Ember.Namespace.create();
 
-
-
-
 Ember.Route.reopen({
   init: function() {
     this._super();
-    
+
     var events = this.events || {};
     var _events = this._events;
 
