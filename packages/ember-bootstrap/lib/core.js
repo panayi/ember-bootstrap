@@ -1,7 +1,25 @@
 var Bootstrap = window.Bootstrap = Ember.Namespace.create();
 
+
+
+
 Ember.Route.reopen({
-  events: {
+  init: function() {
+    this._super();
+    
+    var events = this.events || {};
+    var _events = this._events;
+
+    for (var key in _events) {
+      if (!events[key]) {
+        events[key] = _events[key];
+      }
+    }
+
+    this.events = events;
+  },
+
+  _events: {
     _modalCloseClick: function(modalView) {
       this.handleModalActionAndDestroy(modalView, modalView.get('closeAction'));
     },
@@ -40,7 +58,7 @@ Ember.Route.reopen({
       }
     }
 
-    if (result) {
+    if (result || !action) {
       modalView.destroy();
     }
   }
