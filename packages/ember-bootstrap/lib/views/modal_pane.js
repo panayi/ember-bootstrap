@@ -52,6 +52,7 @@ Bootstrap.ModalPane = Ember.View.extend({
   willDestroyElement: function() {
     if (this._backdrop) this._backdrop.remove();
     this._removeDocumentKeyHandler();
+    Bootstrap.ModalPane.onClose(this);
   },
 
   keyPress: function(event) {
@@ -109,6 +110,8 @@ Bootstrap.ModalPane.reopenClass({
     rootElement = get(this, 'rootElement');
     modalPane.appendTo(rootElement);
     return modalPane;
-  }
+  },
+
+  onClose: Ember.K
 });
 
