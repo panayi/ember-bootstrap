@@ -10,7 +10,7 @@ var modalPaneTemplate = [
 '<div class="modal-body">{{view view.bodyViewClass}}</div>',
 '<div class="modal-footer">',
 '  {{#if view.secondary}}<button class="btn btn-secondary" rel="secondary" {{action "_modalSecondaryClick" view}} {{bindAttr disabled="view.secondaryButtonDisabled"}}>{{view.secondary}}</button>{{/if}}',
-'  {{#if view.primary}}<button {{bindAttr class=":btn :btn-primary primaryClass"}} rel="primary" {{action "_modalPrimaryClick" view}} {{bindAttr disabled="view.primaryButtonDisabled"}}>{{view.primary}}</button>{{/if}}',
+'  {{#if view.primary}}<button {{bindAttr class=":btn :btn-primary view.primaryClass"}} rel="primary" {{action "_modalPrimaryClick" view}} {{bindAttr disabled="view.primaryButtonDisabled"}}>{{view.primary}}</button>{{/if}}',
 '</div>'].join("\n");
 var modalPaneBackdrop = '<div class="modal-backdrop" {{action "backdropClicked" target="view.modalView"}}></div>';
 
